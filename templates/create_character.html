@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Create Character{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Create New Character</h2>
+        <form method="POST" action="{{ url_for('create_character') }}" enctype="multipart/form-data">
+            {{ csrf_token() }}
+            <div class="form-group">
+                <label for="name">Character Name:</label>
+                <input type="text" id="name" name="name" class="form-control" required maxlength="80" placeholder="Enter character name">
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" class="form-control" required placeholder="Describe your character"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="attributes">Attributes (JSON):</label>
+                <textarea id="attributes" name="attributes" class="form-control" required placeholder='e.g., {"strength": 10, "intelligence": 8}'></textarea>
+            </div>
+            <div class="form-group">
+                <label>Avatar:</label><br>
+                <div class="form-check form-check-inline">
+                    <input type="radio" id="avatar1" name="avatar" value="avatar1.png" class="form-check-input" checked>
+                    <label for="avatar1" class="form-check-label">Avatar 1</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" id="avatar2" name="avatar" value="avatar2.png" class="form-check-input">
+                    <label for="avatar2" class="form-check-label">Avatar 2</label>
+                </div>
+                <!-- Add more avatar options as needed -->
+                <div class="form-check form-check-inline">
+                    <input type="radio" id="custom" name="avatar" value="custom" class="form-check-input">
+                    <label for="custom" class="form-check-label">Custom</label>
+                </div>
+            </div>
+            <div class="form-group" id="customAvatarUpload" style="display: none;">
+                <label for="avatarUpload">Upload Custom Avatar:</label>
+                <input type="file" id="avatarUpload" name="avatarUpload" class="form-control-file" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary">Create Character</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript to toggle custom avatar upload field
+        document.addEventListener('DOMContentLoaded', () => {
+            const avatarRadios = document.querySelectorAll('input[name="avatar"]');
+            const customAvatarUpload = document.getElementById('customAvatarUpload');
+
+            avatarRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'custom') {
+                        customAvatarUpload.style.display = 'block';
+                    } else {
+                        customAvatarUpload.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

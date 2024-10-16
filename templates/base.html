@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Character Roleplay{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+</head>
+<body class="bg-gray-900 text-white">
+    <nav class="bg-gray-800 shadow-md">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <a class="text-xl font-bold" href="{{ url_for('home') }}">AI Character Roleplay</a>
+                <div class="space-x-4">
+                    {% if session['user'] %}
+                        <a class="hover:text-gray-300" href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a class="hover:text-gray-300" href="{{ url_for('create_character') }}">Create Character</a>
+                        <a class="hover:text-gray-300" href="{{ url_for('auth.logout') }}">Logout</a>
+                    {% else %}
+                        <a class="hover:text-gray-300" href="{{ url_for('home') }}">Home</a>
+                        <a class="hover:text-gray-300" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="hover:text-gray-300" href="{{ url_for('auth.register') }}">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 px-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Elements
+        const logoutLink = document.querySelector("a[href='{{ url_for('auth.logout') }}']");
+
+        // Logout functionality
+        if (logoutLink) {
+            logoutLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await fetch("{{ url_for('auth.logout') }}", {
+                        method: 'GET',
+                        credentials: 'include',
+                    });
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        window.location.href = "{{ url_for('home') }}";
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    window.location.href = "{{ url_for('home') }}";
+                }
+            });
+        }
+    });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
